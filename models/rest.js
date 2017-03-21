@@ -17,10 +17,7 @@ var Product = mongoose.model('Product', productSchema);
 //CRUD
 //CREATE
 exports.save = function(name, cb) {
-  var newProduct = new Product({ name: name });
-  newProduct.save().then((doc) => {
-    cb(doc)
-  });
+  Product.create({ name: name }, cb);
 }
 //READ ALL
 exports.find = function(cb) {
@@ -32,13 +29,9 @@ exports.search = function(name, cb) {
 }
 //UPDATE
 exports.update = function(id, body, cb){
-  Product.findOneAndUpdate({_id: id}, {$set: body}).then((item) => {
-    if(item) cb(item);
-  });
+  Product.findOneAndUpdate({_id: id}, {$set: body}, cb);
 }
 //DELETE
 exports.delete = function(id, cb){
-  Product.findOneAndRemove({_id: id}).then((item) => {
-    if(item) cb(item);
-  })
+  Product.findOneAndRemove({_id: id}, cb);
 }
