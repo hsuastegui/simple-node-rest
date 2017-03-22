@@ -1,3 +1,4 @@
+// Import Dependencies
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -5,33 +6,42 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+// Connect to DB
+var {mongoose} = require('./models/db');
+
+// Import Controllers
 var index = require('./controllers/index');
-var rest = require('./controllers/rest');
+var products = require('./controllers/products');
 
 var app = express();
 
-// view engine setup
+// View engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+// Logger
 app.use(logger('dev'));
+// Parse information from POST
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// Static Assets
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Routes
 app.use('/', index);
-app.use('/rest', rest);
+app.use('/api/products', products);
 
-// catch 404 and forward to error handler
+// Catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
-// error handler
+// Error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
@@ -41,6 +51,7 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
 var PORT = 3000;
 app.listen(PORT, function(){
   console.log(`App running in http://localhost:${PORT}`);

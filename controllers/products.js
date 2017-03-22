@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var db = require('../models/rest');
+var db = require('../models/product');
 
 //CRUD
 //READ ALL
@@ -17,7 +17,12 @@ router.get('/find/:name', function(req, res, next) {
 });
 //CREATE ONE
 router.post('/add', function(req, res, next) {
-  db.save(req.body.name, function(error, result){
+  db.add(req.body, function(error, result){
+    if(!error) res.send(JSON.stringify(result));
+  });
+});
+router.post('/addMultiple', function(req, res, next) {
+  db.addMultiple(req.body, function(error, result){
     if(!error) res.send(JSON.stringify(result));
   });
 });
@@ -33,4 +38,5 @@ router.delete('/delete/:id', function(req, res) {
     if(!error) res.send(JSON.stringify(result));
   });
 });
+
 module.exports = router;
