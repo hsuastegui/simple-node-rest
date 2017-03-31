@@ -1,19 +1,21 @@
 // Import Dependencies
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+const express = require('express');
+const graphqlHTTP = require('express-graphql');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
 // Connect to DB
-var {mongoose} = require('./models/db');
+const mongoose = require('./models/db');
+const GQLSchema = require('./models/GQLSchema');
 
 // Import Controllers
-var index = require('./controllers/index');
-var products = require('./controllers/products');
+const index = require('./controllers/index');
+const products = require('./controllers/products');
 
-var app = express();
+const app = express();
 
 // View engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -33,16 +35,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Routes
 app.use('/', index);
 app.use('/api/products', products);
+app.use('/graphql', graphqlHTTP({
+  schema: GQLSchema,
+  graphiql: true
+}));
 
 // Catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   var err = new Error('Not Found');
   err.status = 404;
   next(err);
 });
 
 // Error handler
-app.use(function(err, req, res, next) {
+app.use((err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -53,6 +59,6 @@ app.use(function(err, req, res, next) {
 });
 
 var PORT = 3000;
-app.listen(PORT, function(){
+app.listen(PORT, () => {
   console.log(`App running in http://localhost:${PORT}`);
 });
